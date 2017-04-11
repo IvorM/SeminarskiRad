@@ -1,0 +1,104 @@
+﻿@{
+    ViewBag.Title = "Seminars";
+}
+
+<div class="row">
+    @Html.AntiForgeryToken()
+    <div class="col-lg-12">
+        <h1 class="page-header">Seminari</h1>
+    </div>
+</div>
+<div id="seminars">
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        function UpdateSeminars() {
+            $.ajax({
+                    url: '@Url.Action("GetSeminars","Seminars")',
+                    type: 'GET'
+                })
+                .done(function(partialView) {
+                    $('#seminars').html(partialView);
+                    $('.footable').footable();
+                });
+        };
+
+        $('#seminars')
+            .on('click',
+                '.btn.btn-primary',
+                function (e) {
+                    var id = e.currentTarget.value;
+                    console.log(id);
+                    if (id!='') {
+                        location.href = "/Seminars/Edit/" + id;
+                    }   
+                });
+
+        $('#seminars')
+            .on('click',
+                '.btn.btn-danger',
+                function (e) {
+                    var id = e.currentTarget.value;
+                    $.ajax({
+                        url: '@Url.Action("Delete", "Seminars")',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            __RequestVerificationToken: token,
+                            'id': id
+                        },
+                        success: function (data) {
+                            if (data.status == "success") {
+                                $.notify(data.message, "success");
+                                UpdateSeminars();
+                            } else {
+                                $.notify(data.message,
+                                    "error");
+                            }
+                        },
+                        error:
+                            function (xhr, status, error) {
+                                $.notify("Greška", "error");
+
+                            }
+                    });
+                });
+
+        $('#seminars')
+            .on('click',
+                '.btn.btn-warning',
+                function (e) {
+                    var id = e.currentTarget.value;
+                    $.ajax({
+                        url: '@Url.Action("Close", "Seminars")',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            __RequestVerificationToken: token,
+                            'id': id
+                        },
+                        success: function (data) {
+                            if (data.status == "success") {
+                                $.notify(data.message, "success");
+                                UpdateSeminars();
+                            } else {
+                                $.notify(data.message,
+                                    "error");
+                            }
+                        },
+                        error:
+                            function (xhr, status, error) {
+                                $.notify("Greška", "error");
+
+                            }
+                    });
+                });
+       
+        $(document)
+            .ready(function () {
+                 token = $('input[name="__RequestVerificationToken"]', this).val();
+                 UpdateSeminars();
+            });
+    </script>
+}

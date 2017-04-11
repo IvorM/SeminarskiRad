@@ -1,0 +1,116 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Prijava</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquery")
+
+    <script type="text/javascript">
+        $(function () {
+            $("#loginForm")
+               .validate({
+                   rules: {
+
+                       password: {
+                           required: true
+                       },
+                       email: {
+                           required: true
+                       }
+                   },
+                   messages: {
+                       password: {
+                           required: 'Lozinka je obavezno polje!'
+                       },
+                       email: {
+                           required: 'Email je obaavezno polje!',
+                           email: 'Unesite ispravan email format!'
+                       }
+                   }
+               });
+
+            $('#loginForm')
+           .submit(function (e) {  
+               e.preventDefault();
+               if (!$("#loginForm").valid()) {
+                   return;
+               };
+               $("#btnLogin").prop('disabled', true);
+               var model = {
+                   'Email': $('#email').val(),
+                   'Password': $('#password').val()
+               };
+               var token = $('input[name="__RequestVerificationToken"]', this).val();
+                        $.ajax({
+                            url: '@Url.Action("Login", "Account")',
+                            type: 'POST',
+                            dataType: 'json',
+                            data: {
+                                __RequestVerificationToken: token,
+                                model
+                    },
+                   success: function (loginData) {
+                       if (loginData.status != null) {
+                           console.log(loginData.message);
+
+                           if (loginData.status == "success") {
+                               $.notify(loginData.message, "success");
+                               setTimeout(function () {
+                                   window.location.href = "/Home/Index";
+                               }, 2000);
+                           } else {
+                               $.notify(loginData.message, "error");
+                               $("#btnLogin").prop('disabled', false);
+                           }
+                       }
+                   },
+                   error: function (xhr, status, error) {
+                       $.notify("Greška! Pokušajte ponovno.", "error");
+                       console.log(error);
+                       $("#btnLogin").prop('disabled', false);
+                   }
+
+                        });
+           });
+        });
+
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+                <div class="login-panel panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Prijava</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form role="form" id="loginForm">
+                            @Html.AntiForgeryToken()
+                            <fieldset>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="E-mail" name="email" id="email" type="email" style="max-width: 400px" autofocus>
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Lozinka" name="password" id="password" type="password" value="" style="max-width: 400px">
+                                </div>
+                            </fieldset>
+                            <div style="text-align: center">
+                                <input type="submit" id="btnLogin" class="btn btn-lg btn-success" value="Prijava" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,126 @@
+﻿    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+                <div class="login-panel panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Registracija</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form role="form" id="registerForm">
+                           @Html.AntiForgeryToken()
+                            <fieldset>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="E-mail" name="email" type="email" id="email" style="max-width: 400px" autofocus>
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Korisničko ime" name="userName" id="userName" type="password" style="max-width: 400px" value="">
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Lozinka" name="password" id="password" type="password" value="" style="max-width: 400px">
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Potvrdite lozinku" name="confirmPassword" id="confirmPassword" type="password" value="" style="max-width: 400px">
+                                </div>
+                                <input type="submit" id="btnRegister" class="btn btn-lg btn-success "  value="Prijava"/>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(function() {
+            $("#registerForm")
+                .validate({
+                    rules: {
+                        userName: {
+                            required: true,
+                            remote: {
+                                url: '@Url.Action("CheckUserName", "Account")',
+                                type: 'post'
+                            }
+                        },
+                        password: {
+                            required: true,
+                            minlength: 6
+                        },
+                        email: {
+                            required: true,
+                            remote: {
+                                url: '@Url.Action("CheckEmail", "Account")',
+                                type: 'post'
+                            }
+                        },
+                        confirmPassword: {
+                            required: true,
+                            equalTo: '#password'
+                        }
+                    },
+                    messages: {
+                        userName: {
+                            required: 'Korisničko ime je obavezno polje!',
+                            remote: 'Korisničko ime se koristi'
+                        },
+                        password: {
+                            required: 'Lozinka ime je obavezno polje!',
+                            minlength: 'Lozinka mora imati barem 6 znakova'
+                        },
+                        email: {
+                            required: 'Email ime je obavezno polje!',
+                            email: 'Unesite ispravan email format!',
+                            remote: 'Email se koristi'
+                        },
+                        confirmPassword: {
+                            required: 'Potvrda lozinke je obavezno polje!',
+                            equalTo: 'Pogrešno unesena lozinka!'
+                        }
+                    }
+                });
+
+            $('#registerForm')
+                .submit(function(e) {
+                    e.preventDefault();
+                    if (!$("#registerForm").valid()) {
+                        return;
+                    };
+                    $("#btnRegister").prop('disabled', true);
+                    var model = {
+                        'UserName': $('#userName').val(),
+                        'Password': $('#password').val(),
+                        'ConfirmPassword': $('#confirmPassword').val(),
+                        'Email': $('#email').val()
+                    };
+
+                    var token = $('input[name="__RequestVerificationToken"]', this).val();
+                    $.ajax({
+                        url: '@Url.Action("Register", "Account")',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            __RequestVerificationToken: token,
+                            model
+                        },
+                        success: function(data) {
+                            if (data.status == "success") {
+                                $.notify("Uspješno ste registrirali novoga korisnika", "success");
+                                $("#btnRegister").prop('disabled', false);
+                            } else {
+                                $.notify("Greška prilikom registracije", "error");
+                                $("#btnRegister").prop('disabled', false);
+                            }
+
+                        },
+                        error: function(xhr, status, error) {
+                            $.notify("Greška prilikom registracije", "error");
+                            $("#btnRegister").prop('disabled', false);
+                            console.log(error);
+                        }
+                    });
+                });
+        });
+    </script>
+}

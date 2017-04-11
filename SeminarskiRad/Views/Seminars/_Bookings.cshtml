@@ -1,0 +1,53 @@
+﻿@model IEnumerable<SeminarskiRad.Models.Context.SeminarContext.Booking>
+@{
+    Layout = null;
+}
+<div class="row">
+    <div class="col-md-12">
+        <table class="footable table table-stripped toggle-arrow-tiny"  data-show-toggle="false" data-expand-first="false" data-page-size="8" data-filtering="true">
+            <thead>
+                <tr>
+                    <th>Ime</th>
+                    <th>Prezime</th>
+                    <th data-breakpoints="xs sm">Adresa</th>
+                    <th data-breakpoints="xs sm">Datum</th>
+                    <th data-breakpoints="xs sm">Odobreno</th>
+                    <th data-breakpoints="xs sm" data-filterable="false"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var student in Model)
+                {
+                    <tr>
+                        <td>@student.StudentName</td>
+                        <td>@student.StudentSurname</td>
+                        <td>@student.StudentAddress</td>
+                        <td>@student.BookingDate.ToShortDateString()</td>
+                        <td>
+                            @if (student.Approved)
+                            {
+                                @Html.Raw("Da")
+                            }
+                            else
+                            {
+                                @Html.Raw("Ne")
+                            }
+                        </td>
+                        <td>
+                            @if (!student.Approved)
+                            {
+                                if (student.Seminar.MaxStudents> student.Seminar.Bookings.Where(b => b.Approved).Count())
+                                {
+                                    <button type="button" class="btn btn-primary" value="@student.ID" style="float: left; padding: 2px">Odobri</button>
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+

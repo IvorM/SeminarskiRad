@@ -1,0 +1,226 @@
+﻿@using System.Activities.Statements
+@model SeminarskiRad.Models.Context.SeminarContext.Seminar
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+
+    </div>
+</div>
+<div class="row" style="margin-top: 15px">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Uredi
+            </div>
+            <div class="panel-body">
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a data-toggle="tab" href="#tab-1">Opći podaci</a>
+                        </li>
+                        <li class="">
+                            <a data-toggle="tab" href="#tab-2">Polaznici</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane active">
+                            <div class="panel-body">
+                                <form id="opciPodaciForm">
+                                    @Html.AntiForgeryToken()
+                                    <div class="row">
+                                        @Html.HiddenFor(model => model.ID)
+                                        @Html.HiddenFor(model => model.Closed)
+                                        @Html.HiddenFor(model => model.MaxStudents)
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Title, htmlAttributes: new {@class = "control-label col-md-2"})
+                                            <div class="col-md-10">
+                                                @Html.EditorFor(model => model.Title, new {htmlAttributes = new {@class = "form-control"}})
+                                                @Html.ValidationMessageFor(model => model.Title, "", new {@class = "text-danger"})
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.SeminarDescription, htmlAttributes: new {@class = "control-label col-md-2"})
+                                            <div class="col-md-10">
+                                                @Html.EditorFor(model => model.SeminarDescription, new {htmlAttributes = new {@class = "form-control"}})
+                                                @Html.ValidationMessageFor(model => model.SeminarDescription, "", new {@class = "text-danger"})
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.SeminarDate, htmlAttributes: new {@class = "control-label col-md-2"})
+                                            <div class="col-md-10">
+                                                @Html.EditorFor(model => model.SeminarDate, new {htmlAttributes = new {@class = "form-control"}})
+                                                @Html.ValidationMessageFor(model => model.SeminarDate, "", new {@class = "text-danger"})
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Teacher, htmlAttributes: new {@class = "control-label col-md-2"})
+                                            <div class="col-md-10">
+                                                @Html.EditorFor(model => model.Teacher, new {htmlAttributes = new {@class = "form-control"}})
+                                                @Html.ValidationMessageFor(model => model.Teacher, "", new {@class = "text-danger"})
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12" style="text-align: right">
+                                            <button type="submit" value="Spremi" class="btn btn-primary">Spremi</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div id="tab-2" class="tab-pane">
+                            <div class="panel-body" id="popisPolaznika">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        function UpdateBookings() {
+            $.ajax({
+                url: '@Url.Action("GetBookings","Seminars",new {id=Model.ID})',
+                type: 'GET'
+            })
+                .done(function(partialView) {
+                    $('#popisPolaznika').html(partialView);
+                    $('.footable').footable();
+                });
+        };
+
+        $(document)
+            .ready(function() {
+                var token = $('input[name="__RequestVerificationToken"]', this).val();
+
+                UpdateBookings();
+
+                $('#SeminarDate')
+                    .datepicker({
+                        format: "dd.mm.yyyy.",
+                        language: "hr",
+                        autoclose: true
+                    });
+
+                $("#opciPodaciForm")
+                    .validate({
+                        rules: {
+                            Title: {
+                                required: true
+                            },
+                            SeminarDescription: {
+                                required: true
+                            },
+                            SeminarDate: {
+                                required: true
+                            },
+                            Teacher: {
+                                required: true
+                            }
+                        },
+                        messages: {
+                            Title: {
+                                required: 'Naziv je obavezno polje!'
+                            },
+                            SeminarDescription: {
+                                required: 'Opis je obavezno polje!'
+                            },
+                            SeminarDate: {
+                                required: 'Datum je obavezno polje!'
+                            },
+                            Teacher: {
+                                required: 'Profesor je obavezno polje!'
+                            }
+                        }
+                    });
+
+                $('#opciPodaciForm')
+                    .submit(function(e) {
+                        e.preventDefault();
+
+                        if (!$("#opciPodaciForm").valid()) {
+                            return;
+                        };
+
+                        var opciPodaci = {
+                            'ID':@Model.ID,
+                            'Title': $('#Title').val(),
+                            'SeminarDescription': $('#SeminarDescription').val(),
+                            'SeminarDate': $('#SeminarDate').val(),
+                            'MaxStudents':@Model.MaxStudents,
+                            'Closed': @(Model.Closed? 1: 0),
+                            'Teacher': $('#Teacher').val()
+                        };
+
+                        var token = $('input[name="__RequestVerificationToken"]', this).val();
+
+                        $.ajax({
+                            url: '@Url.Action("Edit", "Seminars")',
+                            type: 'POST',
+                            data: {
+                                __RequestVerificationToken: token,
+                                'seminar': opciPodaci
+                            },
+                            success: function(data) {
+                                if (data.status == "success") {
+                                    $.notify(data.message, "success");
+                                    setTimeout(function () {
+                                        window.location.href = "/Seminars/SeminarsList";
+                                    }, 2000);
+                                } else {
+                                    $.notify(data.message, "error");
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                $.notify("Greška", "error");
+                            }
+                        });
+                    });
+
+                $('#popisPolaznika')
+                    .on('click',
+                        '.btn.btn-primary',
+                        function (e) { 
+                            var PolaznikID = e.currentTarget.value;
+                            console.log(PolaznikID);
+                            if (PolaznikID=='') {
+                                return;
+                            }
+
+                            $.ajax({
+                                url: '@Url.Action("Approve", "Seminars")',
+                                type: 'POST',
+                                data: {
+                                    __RequestVerificationToken: token,
+                                    'id': PolaznikID
+                                },
+                                success: function(data) {
+                                    if (data.status == "success") {
+                                        $.notify(data.message, "success");
+                                        UpdateBookings();
+                                    } else {
+                                        $.notify(data.message, "error");
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    $.notify("Greška", "error");
+                                }
+                            });
+                        });
+            });
+    </script>
+}
+
