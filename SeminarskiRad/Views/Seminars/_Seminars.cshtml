@@ -8,7 +8,7 @@
 <div class="panel-body">
     <div class="row">
         <div class="col-lg-12">
-            <table class="footable table table-stripped toggle-arrow-tiny" data-show-toggle="false" data-expand-first="false" data-page-size="8" data-filtering="true">
+            <table class="footable table table-stripped toggle-arrow-tiny" data-paging="true" data-sorting="true"  data-show-toggle="true" data-expand-first="false" data-page-size="8" data-filtering="true" data-filter-placeholder="Pretrazivanje">
                 <thead>
                 <tr>
                     <th>Naziv</th>
@@ -19,6 +19,7 @@
                     <th data-breakpoints="xs sm">Odobreno studenata</th>
                     <th data-breakpoints="xs sm">Predavač</th>
                     <th data-breakpoints="xs sm">Zatvoren</th>
+                    <th data-breakpoints="xs sm" data-filterable="false"></th>
                     <th data-breakpoints="xs sm" data-filterable="false"></th>
                     <th data-breakpoints="xs sm" data-filterable="false"></th>
                     <th data-breakpoints="xs sm" data-filterable="false"></th>
@@ -46,6 +47,7 @@
                             }
                         </td>
                         <td><button type="button" class="btn btn-primary" value="@seminar.ID" data-toggle="modal" data-target="#btnEdit" style="float: left; padding: 2px">Uredi</button></td>
+                        <td><button type="button" class="btn btn-success" value="@seminar.ID" data-toggle="modal" data-target="#btnStudenti" style="float: left; padding: 2px">Studenti</button></td>
                         <td><button type="button" class="btn btn-danger" value="@seminar.ID" data-toggle="modal" data-target="#btnDelete" style="float: left; padding: 2px">Obriši</button></td>
                         <td>
                             @if (!seminar.Closed)

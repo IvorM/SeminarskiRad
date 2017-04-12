@@ -25,9 +25,9 @@ namespace SeminarskiRad
                       "~/Content/site.css",
                       "~/Content/metisMenu.min.css",
                       "~/Content/sb-admin-2.css",
-                      "~/Content/font-awesome.min.css",
-                      "~/Content/footable.core.css",
-                      "~/Content/bootstrap-datepicker3.min.css"));
+                      "~/Content/font-awesome.min.css",  
+                      "~/Content/bootstrap-datepicker3.min.css",
+                      "~/Content/footable.bootstrap.min.css"));
         }
     }
 }

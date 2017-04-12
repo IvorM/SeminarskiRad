@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "Početna";
 }
 
 <div class="row">
@@ -9,27 +9,31 @@
     <!-- /.col-lg-12 -->
 </div>
 <div class="row">
-    <div class="col-lg-3 col-md-6">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        <i class="fa fa-support fa-5x"></i>
-                    </div>
-                    <div class="col-xs-9 text-right">
-                        <div class="huge">Predbilježbe</div>
+    @if (!User.Identity.IsAuthenticated)
+    {
+        <div class="col-lg-3 col-md-6">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-support fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">Predbilježbe</div>
+                        </div>
                     </div>
                 </div>
+                <a href="@Url.Action("BookingsList", "Bookings")">
+                    <div class="panel-footer">
+                        <span class="pull-left">Pregled</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
             </div>
-            <a href="@Url.Action("BookingsList", "Bookings")">
-                <div class="panel-footer">
-                    <span class="pull-left">Pregled</span>
-                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                    <div class="clearfix"></div>
-                </div>
-            </a>
         </div>
-    </div>
+    }
+   
     @if (User.Identity.IsAuthenticated)
     {
         <div class="col-lg-3 col-md-6">
@@ -54,5 +58,5 @@
             </div>
         </div>
     }
-    
+
 </div>

@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Seminars";
+    ViewBag.Title = "Seminari";
 }
 
 <div class="row">
@@ -33,6 +33,17 @@
                     if (id!='') {
                         location.href = "/Seminars/Edit/" + id;
                     }   
+                });
+
+        $('#seminars')
+            .on('click',
+                '.btn.btn-success',
+                function (e) {
+                    var id = e.currentTarget.value;
+                    console.log(id);
+                    if (id != '') {
+                        location.href = "/Seminars/SeminarStudents/" + id;
+                    }
                 });
 
         $('#seminars')

@@ -1,0 +1,67 @@
+﻿@{
+    ViewBag.Title = "Studenti";
+}
+
+<div class="row">
+    @Html.AntiForgeryToken()
+    <div class="col-lg-12">
+        <h1 class="page-header">Studenti</h1>
+    </div>
+</div>
+<div class="panel-body" id="popisPolaznika">
+
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        function UpdateBookings() {
+            $.ajax({
+                url: '@Url.Action("GetBookings","Seminars",new {id=Model.ID})',
+                type: 'GET'
+            })
+                .done(function(partialView) {
+                    $('#popisPolaznika').html(partialView);
+                    $('.footable').footable();
+                });
+        };
+
+        $(document)
+            .ready(function() {
+                var token = $('input[name="__RequestVerificationToken"]', this).val();
+
+                UpdateBookings();
+
+                $('#popisPolaznika')
+                    .on('click',
+                        '.btn.btn-primary',
+                        function (e) {
+                            var PolaznikID = e.currentTarget.value;
+                            console.log(PolaznikID);
+                            if (PolaznikID=='') {
+                                return;
+                            }
+
+                            $.ajax({
+                                url: '@Url.Action("Approve", "Seminars")',
+                                type: 'POST',
+                                data: {
+                                    __RequestVerificationToken: token,
+                                    'id': PolaznikID
+                                },
+                                success: function(data) {
+                                    if (data.status == "success") {
+                                        $.notify(data.message, "success");
+                                        UpdateBookings();
+                                    } else {
+                                        $.notify(data.message, "error");
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    $.notify("Greška", "error");
+                                }
+                            });
+                        });
+            });
+    </script>
+}

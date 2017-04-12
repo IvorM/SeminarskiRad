@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "title";
+    ViewBag.Title = "Predbilježbe";
 }
 
 <div class="row">
@@ -16,24 +16,26 @@
             <div class="modal-header">
                 <h4 class="modal-title">Prijava</h4>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Ime</label>
-                    <input type="text" class="form-control" id="imeModal"></input>
+            <form id="prijavaForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Ime</label>
+                        <input type="text" class="form-control" id="imeModal" name="imeModal"></input>
+                    </div>
+                    <div class="form-group">
+                        <label>Prezime</label>
+                        <input type="text" class="form-control" id="prezimeModal" name="prezimeModal"></input>
+                    </div>
+                    <div class="form-group">
+                        <label>Adresa</label>
+                        <input type="text" class="form-control" id="adresaModal" name="adresaModal"></input>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Prezime</label>
-                    <input type="text" class="form-control" id="prezimeModal"></input>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" id="btnOdustani">Odustani</button>
+                    <button type="button" class="btn btn-primary" id="btnPrijavaTok">Prijava</button>
                 </div>
-                <div class="form-group">
-                    <label>Adresa</label>
-                    <input type="text" class="form-control" id="adresaModal"></input>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Odustani</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnPrijavaTok">Prijava</button>
-            </div>
+            </form>
         </div>
     </div>
 </div>
@@ -41,9 +43,10 @@
 @section scripts{
     <script type="text/javascript">
         var SeminarID = null;
+
         function UpdateBookings() {
             $.ajax({
-                    url: '@Url.Action("GetBookings","Bookings")',
+                    url: '@Url.Action("GetBookings", "Bookings")',
                     type: 'GET'
                 })
                 .done(function(partialView) {
@@ -51,17 +54,49 @@
                     $('.footable').footable();
                 });
         };
-        
+
+        function clearModal() {
+            $('#imeModal').val("");
+            $('#prezimeModal').val("");
+            $('#adresaModal').val("");
+        };
+
         $('#predbiljezbe')
             .on('click',
                 '.btn.btn-primary',
-                function (e) {
+                function(e) {
                     SeminarID = e.currentTarget.value;
                     console.log(SeminarID);
                 });
 
+        $("#prijavaForm")
+            .validate({
+                rules: {
+                    imeModal: {
+                        required: true
+                    },
+                    prezimeModal: {
+                        required: true
+                    },
+                    adresaModal: {
+                        required: true
+                    }
+                },
+                messages: {
+                    imeModal: {
+                        required: 'Ime je obavezno polje!'
+                    },
+                    prezimeModal: {
+                        required: 'Prezime je obavezno polje!'
+                    },
+                    adresaModal: {
+                        required: 'Adresa je obavezno polje!'
+                    }
+                }
+            });
+
         $('#btnPrijavaTok')
-            .click(function () {
+            .click(function() {
                 var prijavaObj = {
                     'StudentName': $('#imeModal').val(),
                     'StudentSurname': $('#prezimeModal').val(),
@@ -69,28 +104,39 @@
                     'SeminarID': SeminarID
                 };
 
+                if (!$("#prijavaForm").valid()) {
+                    return;
+                };
+
                 $.ajax({
                     url: '@Url.Action("Create", "Bookings")',
                     type: 'POST',
-                    dataType:'json',
+                    dataType: 'json',
                     data: {
                         'booking': prijavaObj
                     },
-                    success: function (data) {
+                    success: function(data) {
                         if (data.status == "success") {
+                            $('#prijavaModal').modal('toggle');
                             $.notify(data.message, "success");
+                            clearModal();
                         } else {
                             $.notify(data.message, "error");
                         }
                     },
-                    error: function (xhr, status, error) {
+                    error: function(xhr, status, error) {
                         $.notify("Greška prilikom prijave", "error");
                     }
                 });
             });
 
+        $('#btnOdustani')
+            .click(function () {
+                clearModal();
+                $('#prijavaModal').modal('toggle');
+            });
         $(document)
-            .ready(function () {
+            .ready(function() {
                 UpdateBookings();
             });
     </script>

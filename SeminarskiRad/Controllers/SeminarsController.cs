@@ -32,6 +32,20 @@ namespace SeminarskiRad.Controllers
             return View("_Bookings", ss.GetBookings(id));
         }
 
+        public ActionResult SeminarStudents(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Seminar seminar = ss.FindSeminar(id);
+            if (seminar == null)
+            {
+                return HttpNotFound();
+            }
+            return View(seminar);
+        }
+
         public ActionResult Create()
         {
             return View();

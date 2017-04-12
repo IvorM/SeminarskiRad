@@ -8,14 +8,14 @@
     <div class="row">
         <div class="col-lg-12">
             
-            <table class="footable table table-stripped toggle-arrow-tiny"  data-show-toggle="false" data-expand-first="false" data-page-size="8" data-filtering="true">
+            <table class="footable table table-stripped toggle-arrow-tiny" data-paging="true" data-sorting="true"  data-show-toggle="true" data-expand-first="false" data-page-size="8" data-filtering="true" data-filter-placeholder="Pretrazivanje">
                 <thead>
                 <tr>
                     <th>Naziv</th>
                     <th data-breakpoints="xs sm">Opis</th>
-                    <th>Datum</th>
+                    <th data-type="date">Datum</th>
                     <th data-breakpoints="xs sm">Predavač</th>
-                    <th  data-breakpoints="xs sm" data-filterable="false"></th>
+                    <th data-breakpoints="xs sm" data-filterable="false"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -26,7 +26,7 @@
                         <td>@seminar.SeminarDescription</td>
                         <td>@seminar.SeminarDate.ToShortDateString()</td>
                         <td>@seminar.Teacher</td>
-                        <td><button type="button" class="btn btn-primary" value="@seminar.ID" data-toggle="modal" data-target="#prijavaModal" style="float: left; padding: 2px">Prijava</button></td>
+                        <td><button type="button" class="btn btn-primary" value="@seminar.ID" data-toggle="modal" data-target="#prijavaModal" style="float: left; padding: 2px">Prijavi seminar</button></td>
                     </tr>
                 }
                 </tbody>

@@ -21,11 +21,15 @@
                     <!-- /input-group -->
                 </li>
                 <li>
-                    <a href="@Url.Action("Index","Home")"><i class="fa fa-dashboard fa-fw"></i> Početna</a>
+                    <a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard fa-fw"></i> Početna</a>
                 </li>
-                <li>
-                    <a href="@Url.Action("BookingsList", "Bookings")"><i class="fa fa-table fa-fw"></i> Predbilježbe</a>
-                </li>
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <li>
+                        <a href="@Url.Action("BookingsList", "Bookings")"><i class="fa fa-table fa-fw"></i> Predbilježbe</a>
+                    </li>
+                }
+                
                 @if (User.Identity.IsAuthenticated)
                 {
                     <li>

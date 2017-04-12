@@ -1,7 +1,7 @@
 ﻿@model SeminarskiRad.Models.Context.SeminarContext.Seminar
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Novi seminar";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -124,6 +124,13 @@
                                 required: 'Broj studenata je obavezno polje',
                                 min: 'Minimalno 1'
                             }
+                        },
+                        highlight: function (element) {
+                            $(element).closest('.form-group').addClass('has-error');
+                        },
+                        unhighlight: function (element) {
+                            $(element).closest('.form-group').removeClass('has-error');
+                            $(element).closest('.form-group').addClass('has-success');
                         }
                     });
 
